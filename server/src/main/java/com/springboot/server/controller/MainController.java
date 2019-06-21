@@ -4,7 +4,9 @@ import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import com.springboot.server.entity.Print;
+import com.springboot.server.entity.PrintDTO;
 import com.springboot.server.repository.PrintRepository;
+import com.springboot.server.service.PrintService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,10 +36,8 @@ public class MainController {
     public @ResponseBody
     void addNewPrint () {
 
-        ArrayList<String> arrayOwners;
-        ArrayList<String> arrayDocuments;
-        ArrayList<String> arrayPagesPrinted;
-        ArrayList<String> arrayTotalPages;
+        ArrayList<PrintDTO> arrayPrintDTO;
+        PrintService printService = new PrintService();
 
         while(true) {
 
@@ -55,32 +55,17 @@ public class MainController {
                 String totalpages = response.getCommandOutput();
 
                 int numberDocuments = documents.split("\n").length;
+                //PrintDTO printDTO;
+                arrayPrintDTO = new ArrayList<>();
 
                 if(numberDocuments>3) {
-
-                    arrayOwners = new ArrayList();
-                    arrayDocuments = new ArrayList();
-                    arrayPagesPrinted = new ArrayList();
-                    arrayTotalPages = new ArrayList();
-
                     for (int i = 3; i < numberDocuments; i++) {
-                        arrayOwners.add(StringUtils.deleteWhitespace(owners.split("\n")[i]));
+                        arrayPrintDTO.add(new PrintDTO(StringUtils.deleteWhitespace(owners.split("\n")[i]), StringUtils.deleteWhitespace(documents.split("\n")[i]),
+                                StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]), StringUtils.deleteWhitespace(totalpages.split("\n")[i])));
                     }
-
-                    for (int i = 3; i < numberDocuments; i++) {
-                        arrayDocuments.add(StringUtils.deleteWhitespace(documents.split("\n")[i]));
-                    }
-
-                    for (int i = 3; i < numberDocuments; i++) {
-                        arrayPagesPrinted.add(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]));
-                    }
-                    for (int i = 3; i < numberDocuments; i++) {
-                        arrayTotalPages.add(StringUtils.deleteWhitespace(totalpages.split("\n")[i]));
-                    }
-
-                    for (int i = 0; i < arrayOwners.size(); i++) {
-                        if (arrayPagesPrinted.get(i).equals(arrayTotalPages.get(i))) {
-                            printRepository.save(new Print(arrayOwners.get(i), arrayDocuments.get(i), arrayPagesPrinted.get(i), LocalDateTime.now().toString()));
+                    for (PrintDTO o: arrayPrintDTO) {
+                        if(o.getTotalPages().equals(o.getPagesPrinted())){
+                            printService.addPrint(o);
                         }
                     }
                     powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");

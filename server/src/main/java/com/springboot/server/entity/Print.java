@@ -9,6 +9,7 @@ public class Print {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+
     @Column(name ="owner",length = 100)
     private String owner;
     @Column(name ="namedocument",length = 100)
@@ -18,13 +19,45 @@ public class Print {
     @Column(name ="dateprint",length = 100)
     private String datePrint;
 
-    protected Print(){}
+    public Print(){}
 
     public Print(String owner, String nameDocument, String numberPages, String datePrint){
         this.owner=owner;
         this.nameDocument=nameDocument;
         this.numberPages=numberPages;
         this.datePrint=datePrint;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getNameDocument() {
+        return nameDocument;
+    }
+
+    public void setNameDocument(String nameDocument) {
+        this.nameDocument = nameDocument;
+    }
+
+    public String getNumberPages() {
+        return numberPages;
+    }
+
+    public void setNumberPages(String numberPages) {
+        this.numberPages = numberPages;
+    }
+
+    public String getDatePrint() {
+        return datePrint;
+    }
+
+    public void setDatePrint(String datePrint) {
+        this.datePrint = datePrint;
     }
 
     @Override
