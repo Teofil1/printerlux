@@ -9,35 +9,28 @@ import com.springboot.server.repository.PrintRepository;
 import com.springboot.server.service.PrintService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
-@Controller    // This means that this class is a Controller
+@RestController
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
 public class MainController {
+
     @Autowired
-    private PrintRepository printRepository;
+    private PrintService printService;
 
-    /*@GetMapping(path="/add")
-    public @ResponseBody
-    String addNewPrint (@RequestParam String owner, @RequestParam String nameDocument, @RequestParam Integer numberPages
-            , @RequestParam String datePrint) {
-
-        printRepository.save(new Print(owner, nameDocument, numberPages, datePrint));
-        return "Saved";
-    }*/
-    @GetMapping(path="/add")
-    public @ResponseBody
+    @GetMapping("/print")
     void addNewPrint () {
 
         ArrayList<PrintDTO> arrayPrintDTO;
-        PrintService printService = new PrintService();
 
         while(true) {
 
@@ -55,7 +48,6 @@ public class MainController {
                 String totalpages = response.getCommandOutput();
 
                 int numberDocuments = documents.split("\n").length;
-                //PrintDTO printDTO;
                 arrayPrintDTO = new ArrayList<>();
 
                 if(numberDocuments>3) {
@@ -65,6 +57,7 @@ public class MainController {
                     }
                     for (PrintDTO o: arrayPrintDTO) {
                         if(o.getTotalPages().equals(o.getPagesPrinted())){
+                            //log.info("Dodanie wydruku: " + o);
                             printService.addPrint(o);
                         }
                     }
@@ -77,8 +70,16 @@ public class MainController {
 
     }
 
-    @GetMapping(path="/all")
+    @PostMapping("/addPrint")
+    public ResponseEntity addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
+        //System.out.println("USER: "+ httpServletRequest.getRemoteUser());
+        System.out.println("Dodanie kursu: " + printDTO);
+        Print print = printService.addPrint(printDTO);
+        return new ResponseEntity<>(print, HttpStatus.OK);
+    }
+
+   /* @GetMapping(path="/all")
     public @ResponseBody Iterable<Print> getAllUsers() {
         return printRepository.findAll();
-    }
+    }*/
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface PrintRepository extends CrudRepository<Print, Integer> {
 
-    List<Print> findByNameDocument(String nameDocument);
+    //List<Print> findByNameDocument(String nameDocument);
     /*@Query("select p from Print p where owner = :name")
     Print getByName(String name);*/
 }
