@@ -4,12 +4,15 @@ import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import com.springboot.client.model.PrintModel;
+import com.springboot.client.service.JSonService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -66,6 +69,16 @@ public class SystemPrint {
                     for (PrintModel o: arrayPrintDTO) {
                         if(o.getTotalPages().equals(o.getPagesPrinted())){
                             log.info("Dodanie wydruku: " + o);
+                            HttpURLConnection conn;
+                            try {
+                                conn = JSonService
+                                        .httpConnectToREST("http://localhost:5050/demo/addPrint",
+                                                "POST",
+                                                "Authorization");
+                                    JSonService.addParsedJsonObject(o, conn);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                             //printService.addPrint(o);
                             //Tu wysylamy PrintModel do Serwera
                         }
