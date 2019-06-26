@@ -27,10 +27,10 @@ public class MainController {
     private PrintService printService;
 
     @PostMapping("/addPrint")
-    public ResponseEntity addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
+    public boolean addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
         log.info("Dodanie wydruku: " + printDTO);
-        Print print = printService.addPrint(printDTO);
-        return new ResponseEntity<>(print, HttpStatus.OK);
+        //PrintDTO print = printService.addPrint(printDTO);
+        return printService.addPrint(printDTO);
     }
 
     @GetMapping("/print")
