@@ -43,7 +43,7 @@ public class SystemPrint {
 
         while(true) {
 
-            System.out.println("ywkonuje sie");
+            System.out.println("wykonuje sie");
 
             try (PowerShell powerShell = PowerShell.openSession()) {
 
@@ -68,6 +68,7 @@ public class SystemPrint {
                     }
                     for (PrintModel o: arrayPrintDTO) {
                         if(o.getTotalPages().equals(o.getPagesPrinted())){
+
                             log.info("Dodanie wydruku: " + o);
                             HttpURLConnection conn;
                             try {
