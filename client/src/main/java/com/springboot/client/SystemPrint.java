@@ -73,6 +73,7 @@ public class SystemPrint {
                                     JSonService.addParsedJsonObject(o, conn);
                             } catch (IOException e1) {
                                 e1.printStackTrace();
+
                             }
                         }
                     }
