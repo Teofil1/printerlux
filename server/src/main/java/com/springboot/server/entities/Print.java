@@ -1,4 +1,4 @@
-package com.springboot.server.entity;
+package com.springboot.server.entities;
 
 import javax.persistence.*;
 

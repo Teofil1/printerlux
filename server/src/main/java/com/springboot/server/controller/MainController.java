@@ -3,31 +3,30 @@ package com.springboot.server.controller;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import com.springboot.server.entity.Print;
-import com.springboot.server.entity.PrintDTO;
-import com.springboot.server.repository.PrintRepository;
+import com.springboot.server.entities.Print;
+import com.springboot.server.entities.PrintDTO;
 import com.springboot.server.service.PrintService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-
+@Slf4j
 @RestController
-@RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
+@RequestMapping(path="/printerlux") // This means URL's start with /demo (after Application path)
 public class MainController {
 
     @Autowired
     private PrintService printService;
 
-    @GetMapping("/print")
+    /*@GetMapping("/print")
     void addNewPrint () {
 
         ArrayList<PrintDTO> arrayPrintDTO;
@@ -68,14 +67,22 @@ public class MainController {
         }
 
 
-    }
+    }*/
 
     @PostMapping("/addPrint")
     public ResponseEntity addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
-        //System.out.println("USER: "+ httpServletRequest.getRemoteUser());
-        System.out.println("Dodanie kursu: " + printDTO);
+        //log.info("USER: ", httpServletRequest.getRemoteUser());
+        log.info("Dodanie kursu: " + printDTO);
         Print print = printService.addPrint(printDTO);
         return new ResponseEntity<>(print, HttpStatus.OK);
+    }
+
+    @GetMapping("/print")
+    public ResponseEntity<List<Print>> getCourses(HttpServletRequest httpServletRequest) {
+        List<Print> listOfPrints = printService.getAllPrints();
+        //log.info("USER: ", httpServletRequest.getRemoteUser());
+        log.info("Pobranie wydrokow: {}" + listOfPrints.toString());
+        return new ResponseEntity<>(listOfPrints, HttpStatus.OK);
     }
 
    /* @GetMapping(path="/all")

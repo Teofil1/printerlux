@@ -1,15 +1,14 @@
 package com.springboot.server.repository;
 
 
-import com.springboot.server.entity.Print;
-import org.springframework.data.repository.CrudRepository;
+import com.springboot.server.entities.Print;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface PrintRepository extends CrudRepository<Print, Integer> {
+public interface PrintRepository extends JpaRepository<Print, Integer> {
 
+    Print getById(Integer id);
     //List<Print> findByNameDocument(String nameDocument);
     /*@Query("select p from Print p where owner = :name")
     Print getByName(String name);*/

@@ -1,6 +1,4 @@
-package com.springboot.server.entity;
-
-import java.util.ArrayList;
+package com.springboot.server.entities;
 
 public class PrintDTO {
 
