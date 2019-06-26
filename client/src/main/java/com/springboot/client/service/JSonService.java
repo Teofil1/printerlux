@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 
 public class JSonService {
 
-    public static List<PrintModel> getListOfModels() throws IOException {
+    /*public static List<PrintModel> getListOfModels() throws IOException {
         URL url = new URL("http://localhost:5050/printerlux/print");//your url i.e fetch data from .
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -44,7 +44,7 @@ public class JSonService {
         });
         conn.disconnect();
         return listOfCurseModel;
-    }
+    }*/
 
     public static void addParsedJsonObject(PrintModel printModel, HttpURLConnection conn) throws IOException {
         Gson gson = new Gson();
@@ -57,19 +57,18 @@ public class JSonService {
             throw new RuntimeException("Failed : HTTP error code : "
                     + conn.getResponseCode());
         }
-
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 (conn.getInputStream())));
 
         conn.disconnect();
     }
 
-    public static HttpURLConnection httpConnectToREST(String urlConn, String methodType, String requestProperty) throws IOException {
+    public static HttpURLConnection httpConnectToREST(String urlConn, String methodType) throws IOException {
         URL url = new URL(urlConn);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         String userCredentials = "user:password";
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
-        conn.setRequestProperty(requestProperty, basicAuth);
+        //conn.setRequestProperty(requestProperty, basicAuth);
         conn.setDoOutput(true);
         conn.setRequestMethod(methodType);
         conn.setRequestProperty("Content-Type", "application/json");

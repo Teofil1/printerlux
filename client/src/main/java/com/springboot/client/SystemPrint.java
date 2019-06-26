@@ -38,8 +38,6 @@ public class SystemPrint {
 
         while(true) {
 
-            System.out.println("wykonuje sie");
-
             try (PowerShell powerShell = PowerShell.openSession()) {
 
                 PowerShellResponse response;
@@ -68,9 +66,8 @@ public class SystemPrint {
                             HttpURLConnection conn;
                             try {
                                 conn = JSonService
-                                        .httpConnectToREST("http://localhost:5050/demo/addPrint",
-                                                "POST",
-                                                "Authorization");
+                                        .httpConnectToREST("http://localhost:5050/printerlux/addPrint",
+                                                "POST");
                                     JSonService.addParsedJsonObject(o, conn);
                             } catch (IOException e1) {
                                 e1.printStackTrace();
@@ -113,8 +110,9 @@ public class SystemPrint {
                 "This dialog box is run from System Tray"));
 
         aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(null,
-                "I'm watching you! Ha-ha!"));
+                "Very important information"));
     }
+
 
     protected static Image createImage(String path, String description) {
         URL imageURL = SystemPrint.class.getResource(path);

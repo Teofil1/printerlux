@@ -31,7 +31,12 @@ public class PrintService {
         print.setNumberPages(printDTO.getPagesPrinted());
         print.setDatePrint(LocalDateTime.now().toString());
         return printRepository.save(print);
-
     }
+
+    public List<Print> getPrintByOwner(String owner) {
+        return printRepository.findByOwner(owner);
+    }
+
+
 
 }
