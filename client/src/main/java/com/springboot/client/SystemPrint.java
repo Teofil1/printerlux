@@ -20,20 +20,13 @@ import java.util.ArrayList;
 public class SystemPrint {
     public static void main(String[] args) {
 
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        UIManager.put("swing.boldMetal", Boolean.FALSE);
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+        uiManager();
+        reciveDataFromPShell();
+        return;
 
+    }
+
+    public static void reciveDataFromPShell() {
         ArrayList<PrintModel> arrayPrint;
 
         while(true) {
@@ -59,27 +52,51 @@ public class SystemPrint {
                         arrayPrint.add(new PrintModel(StringUtils.deleteWhitespace(owners.split("\n")[i]), StringUtils.deleteWhitespace(documents.split("\n")[i]),
                                 StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]), StringUtils.deleteWhitespace(totalpages.split("\n")[i])));
                     }
-                    for (PrintModel o: arrayPrint) {
-                        if(o.getTotalPages().equals(o.getPagesPrinted())){
-
-                            log.info("Dodanie wydruku: " + o);
-                            HttpURLConnection conn;
-                            try {
-                                conn = JSonService
-                                        .httpConnectToREST("http://localhost:5050/printerlux/addPrint",
-                                                "POST");
-                                    JSonService.addParsedJsonObject(o, conn);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-
-                            }
-                        }
-                    }
-                    powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");
+                    addPrintPostRest(arrayPrint);
+                    clearBuffor(powerShell);
                 }
             } catch (PowerShellNotAvailableException ex) {
             }
         }
+    }
+
+    public static void addPrintPostRest(ArrayList<PrintModel> arrayPrint) {
+        for (PrintModel o: arrayPrint) {
+            if(o.getTotalPages().equals(o.getPagesPrinted())){
+
+                log.info("Dodanie wydruku: " + o);
+                HttpURLConnection conn;
+                try {
+                    conn = JSonService
+                            .httpConnectToREST("http://localhost:5050/printerlux/addPrint",
+                                    "POST");
+                    JSonService.addParsedJsonObject(o, conn);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+
+                }
+            }
+        }
+    }
+
+    private static void clearBuffor(PowerShell powerShell) {
+        powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");
+    }
+
+    public static void uiManager() {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (UnsupportedLookAndFeelException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        UIManager.put("swing.boldMetal", Boolean.FALSE);
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     private static void createAndShowGUI() {
@@ -92,7 +109,7 @@ public class SystemPrint {
                 new TrayIcon(createImage("/icondruk2.png", "tray icon"));
         final SystemTray tray = SystemTray.getSystemTray();
         trayIcon.setImageAutoSize(true);
-        trayIcon.setToolTip("PrinterLux");
+        trayIcon.setToolTip("PrinterLuxmed");
 
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
@@ -107,10 +124,10 @@ public class SystemPrint {
             return;
         }
         trayIcon.addActionListener(e -> JOptionPane.showMessageDialog(null,
-                "This dialog box is run from System Tray"));
+                "Wydruk Luxmed"));
 
         aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(null,
-                "Very important information"));
+                "Po więcej informacji skontaktuj się z administratorem"));
     }
 
 
