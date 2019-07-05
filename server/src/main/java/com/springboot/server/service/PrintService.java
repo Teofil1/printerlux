@@ -26,14 +26,15 @@ public class PrintService {
     }
 
     public boolean addPrint(@RequestBody PrintDTO printDTO) {
-        //Print print = new Print();
-        ModelMapper modelMapper = new ModelMapper();
-        Print print = modelMapper.map(printDTO,Print.class);
-        /*print.setId(printDTO.getId());
+        Print print = new Print();
+        //ModelMapper modelMapper = new ModelMapper();
+        //Print print = modelMapper.map(printDTO,Print.class);
+        //print.setId(printDTO.getId());
         print.setOwner(printDTO.getOwner());
         print.setNameDocument(printDTO.getDocument());
         print.setNumberPages(printDTO.getPagesPrinted());
-        print.setDatePrint(printDTO.getDatePrint());*/
+        //print.setDatePrint(printDTO.getDatePrint());
+        print.setDatePrint(LocalDateTime.now());
         try{
             printRepository.save(print);
         }catch (Exception e){

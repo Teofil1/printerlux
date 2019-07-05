@@ -1,3 +1,4 @@
+/*
 package com.springboot.server.config;
 
 import org.springframework.context.annotation.Bean;
@@ -41,3 +42,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 }
+
+*/

@@ -3,7 +3,10 @@ package com.springboot.client.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
+@NoArgsConstructor
 public class PrintModel {
 
     @JsonProperty("id")
@@ -16,16 +19,16 @@ public class PrintModel {
     private String document;
 
     @JsonProperty("pagesPrinted")
-    private String pagesPrinted;
+    private Integer pagesPrinted;
 
-    @JsonProperty("totalPages")
-    private String totalPages;
+    @JsonProperty("datePrint")
+    private LocalDateTime datePrint;
 
-    public PrintModel(String owner, String document, String pagesPrinted, String totalPages) {
+    public PrintModel(String owner, String document, Integer pagesPrinted) {
         this.owner = owner;
         this.document = document;
         this.pagesPrinted = pagesPrinted;
-        this.totalPages = totalPages;
+        datePrint = LocalDateTime.now();
     }
 
 }
