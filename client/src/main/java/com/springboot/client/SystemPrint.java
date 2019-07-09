@@ -14,7 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDateTime;
+
 import java.util.LinkedList;
 
 
@@ -24,7 +24,7 @@ public class SystemPrint {
         uiManager();
         while(true){
             //try {
-                addPrintPostRest(getPrintedDocuments());
+                addPrintPostRest();
                 //clearPrintedDocumentsFromBuffor();
 
             /*}catch (Exception e){
@@ -46,7 +46,6 @@ public class SystemPrint {
             response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object TotalPages");
             String totalpages = response.getCommandOutput();
             int numberDocuments = documents.split("\n").length;
-            System.out.println(numberDocuments);
             if (numberDocuments > 3) {
                 listDataFromBuffor = new LinkedList<>();
                 for (int i = 3; i < numberDocuments; i++) {
@@ -67,18 +66,18 @@ public class SystemPrint {
         LinkedList<DataFromBuffor> listDataFromBuffer = getDataFromPBuffor();
         LinkedList<PrintModel> listPrintedDocuments = null;
         if(listDataFromBuffer != null) {
+            listPrintedDocuments = new LinkedList<>();
             for (DataFromBuffor o : listDataFromBuffer ) {
                 if (o.getTotalPages()==o.getPagesPrinted()) {
-                    System.out.println("!!!!!!!");
-                    PrintModel printModel = new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted());
-                    listPrintedDocuments.add(printModel);
+                    listPrintedDocuments.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted()));
                 }
             }
         }
         return listPrintedDocuments;
     }
 
-    public static void addPrintPostRest(LinkedList<PrintModel> listPrintedDocuments) {
+    public static void addPrintPostRest() {
+        LinkedList<PrintModel> listPrintedDocuments = getPrintedDocuments();
         if(listPrintedDocuments!=null) {
             for (PrintModel o : listPrintedDocuments) {
                 log.info("Dodanie wydruku: " + o);

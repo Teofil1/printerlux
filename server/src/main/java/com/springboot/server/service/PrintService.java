@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,7 +35,7 @@ public class PrintService {
         print.setNameDocument(printDTO.getDocument());
         print.setNumberPages(printDTO.getPagesPrinted());
         //print.setDatePrint(printDTO.getDatePrint());
-        print.setDatePrint(LocalDateTime.now());
+        print.setDatePrint(printDTO.getDatePrint());
         try{
             printRepository.save(print);
         }catch (Exception e){

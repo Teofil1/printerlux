@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Builder
@@ -15,8 +16,7 @@ public class PrintDTO {
     private String owner;
     private String document;
     private Integer pagesPrinted;
-//    private String totalPages;
-    private LocalDateTime datePrint;
+    private String datePrint;
 
 
 }
