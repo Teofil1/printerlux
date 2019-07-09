@@ -24,7 +24,7 @@ public class LocationDataTracking extends SystemPrint {
             PowerShellResponse response;
             response = locationOpen.executeCommand("get-wmiobject -class win32_networkadapterconfiguration | Select-Object ipaddress");
             location = response.getCommandOutput();
-           // System.out.println(location); //TODO wyciecic
+            // System.out.println(location); //TODO wyciecic
             locationOpen.close();
         }
     }
@@ -36,7 +36,7 @@ public class LocationDataTracking extends SystemPrint {
             String key1 = cutStrang1.nextToken();
             String value1 = cutStrang1.nextToken();
             location = value1;
-           // System.out.println(location); //TODO wyciać
+            // System.out.println(location); //TODO wyciać
         }
         // przyciecie stringa do postaci samego adresu ip komputera
         StringTokenizer cutStrang2 = new StringTokenizer(location, ",");
