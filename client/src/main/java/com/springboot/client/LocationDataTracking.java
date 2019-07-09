@@ -17,9 +17,6 @@ public class LocationDataTracking extends SystemPrint {
         cutDataFromPowerShell();
 
     }
-
-
-
     public static void getLocalizationFromPowerShell() {
         // wywołanie polecenia powershell do adresu ip, przekierowanie do zmiennej i zamknięcie sesji
         PowerShell locationOpen = PowerShell.openSession();
@@ -30,20 +27,26 @@ public class LocationDataTracking extends SystemPrint {
            // System.out.println(location); //TODO wyciecic
             locationOpen.close();
         }
-
     }
     public static void cutDataFromPowerShell() {
-
-        StringTokenizer stringTokenizer = new StringTokenizer(location, "{}");
-        while(stringTokenizer.hasMoreTokens())
+        // przycięcie stringa do postaci ip i adresu mac
+        StringTokenizer cutStrang1 = new StringTokenizer(location, "{}");
+        while(cutStrang1.hasMoreTokens())
         {
-            String klucz = stringTokenizer.nextToken();
-            String wartosc = stringTokenizer.nextToken();
-            location = wartosc;
+            String key1 = cutStrang1.nextToken();
+            String value1 = cutStrang1.nextToken();
+            location = value1;
+           // System.out.println(location); //TODO wyciać
+        }
+        // przyciecie stringa do postaci samego adresu ip komputera
+        StringTokenizer cutStrang2 = new StringTokenizer(location, ",");
+        while(cutStrang2.hasMoreTokens())
+        {
+            String key2 = cutStrang2.nextToken();
+            String value2 = cutStrang2.nextToken();
+            location = key2;
             System.out.println(location); //TODO wyciać
         }
-
-
     }
 
 
