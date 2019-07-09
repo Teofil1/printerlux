@@ -8,12 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class  DataFromBuffor {
     private String owner;
     private String document;
     private Integer pagesPrinted;
     private Integer totalPages;
-
-
 }

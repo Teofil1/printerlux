@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 
@@ -69,7 +70,7 @@ public class SystemPrint {
             listPrintedDocuments = new LinkedList<>();
             for (DataFromBuffor o : listDataFromBuffer ) {
                 if (o.getTotalPages()==o.getPagesPrinted()) {
-                    listPrintedDocuments.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted()));
+                    listPrintedDocuments.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), new Date().toString()));
                 }
             }
         }
@@ -92,7 +93,18 @@ public class SystemPrint {
                 }
             }
         }
-        else System.out.println("Nie ma w buforze dokumentow do wysylania");
+    }
+
+    public static String getIPFromPowerShell() {
+        String ipv4 = "";
+        try (PowerShell powerShell = PowerShell.openSession()) {
+            PowerShellResponse response;
+            response = powerShell.executeCommand("get-wmiobject -class win32_networkadapterconfiguration | Select-Object ipaddress");
+            String location= response.getCommandOutput();
+            ipv4 = location.split("\\{")[1].split(",")[0];
+        } catch (PowerShellNotAvailableException ex) {
+        }
+        return ipv4;
     }
 
     private static void clearPrintedDocumentsFromBuffor() {
