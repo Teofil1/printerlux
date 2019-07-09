@@ -1,6 +1,5 @@
 package com.springboot.server.service;
 
-
 import com.springboot.server.entities.Print;
 import com.springboot.server.entities.PrintDTO;
 import com.springboot.server.repository.PrintRepository;
@@ -8,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 import java.util.List;
 
@@ -25,21 +23,18 @@ public class PrintService {
         return printRepository.findAll();
     }
 
-    public boolean addPrint(@RequestBody PrintDTO printDTO) {
+    public void addPrint(@RequestBody PrintDTO printDTO) {
         ModelMapper modelMapper = new ModelMapper();
-        Print print = modelMapper.map(printDTO,Print.class);
-        try{
+        Print print = modelMapper.map(printDTO, Print.class);
+        try {
             printRepository.save(print);
-        }catch (Exception e){
-            return false;
+        } catch (Exception e) {
         }
-        return true;
     }
 
     public List<Print> getPrintByOwner(String owner) {
         return printRepository.findByOwner(owner);
     }
-
 
 
 }

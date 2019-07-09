@@ -1,13 +1,13 @@
 package com.springboot.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Data;
 
 @Data
 public class PrintModel {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
     @JsonProperty("owner")
     private String owner;
     @JsonProperty("nameDocument")

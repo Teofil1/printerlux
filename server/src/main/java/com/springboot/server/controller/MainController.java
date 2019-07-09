@@ -1,13 +1,9 @@
 package com.springboot.server.controller;
 
-import com.profesorfalken.jpowershell.PowerShell;
-import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
-import com.profesorfalken.jpowershell.PowerShellResponse;
 import com.springboot.server.entities.Print;
 import com.springboot.server.entities.PrintDTO;
 import com.springboot.server.service.PrintService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +11,21 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path="/printerlux") // This means URL's start with /demo (after Application path)
+@RequestMapping(path = "/printerlux") // This means URL's start with /demo (after Application path)
 public class MainController {
 
     @Autowired
     private PrintService printService;
 
     @PostMapping("/addPrint")
-    public boolean addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
+    public void addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
         log.info("Dodanie wydruku: " + printDTO);
         //PrintDTO print = printService.addPrint(printDTO);
-        return printService.addPrint(printDTO);
+        printService.addPrint(printDTO);
     }
 
     @GetMapping("/print")
