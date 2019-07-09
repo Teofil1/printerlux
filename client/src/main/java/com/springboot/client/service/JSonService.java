@@ -1,6 +1,6 @@
 package com.springboot.client.service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.client.model.PrintModel;
 
 import java.io.BufferedReader;
@@ -42,10 +42,12 @@ public class JSonService {
     }*/
 
     public static void addParsedJsonObject(PrintModel printModel, HttpURLConnection conn) throws IOException {
-        Gson gson = new Gson();
-        String input = gson.toJson(printModel);
+        /*Gson gson = new Gson();
+        String input = gson.toJson(printModel);*/
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(printModel);
         OutputStream os = conn.getOutputStream();
-        os.write(input.getBytes());
+        os.write(json.getBytes());
         os.flush();
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
