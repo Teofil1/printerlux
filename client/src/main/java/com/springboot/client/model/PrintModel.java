@@ -30,6 +30,7 @@ public class PrintModel {
         this.nameDocument = nameDocument;
         this.numberPages = numberPages;
         this.datePrint = datePrint;
+        //this.ipv4 = ipv4;
     }
 
 }

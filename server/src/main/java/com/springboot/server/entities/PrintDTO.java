@@ -15,4 +15,5 @@ public class PrintDTO {
     private String nameDocument;
     private Integer numberPages;
     private LocalDateTime datePrint;
+    //private String ipv4;
 }
