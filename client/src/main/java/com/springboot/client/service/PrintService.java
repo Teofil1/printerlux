@@ -3,21 +3,22 @@ package com.springboot.client.service;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import com.springboot.client.model.DataFromBuffor;
+import com.springboot.client.model.DataFromBuffer;
 import com.springboot.client.model.PrintModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 
 @Slf4j
 public class PrintService {
 
-    public static LinkedList<DataFromBuffor> getDataFromPBuffor() {
-        LinkedList<DataFromBuffor> listDataFromBuffor = null;
+    public static LinkedList<DataFromBuffer> getDataFromPBuffer() {
+        LinkedList<DataFromBuffer> dataFromBufferLinkedLis = null;
         try (PowerShell powerShell = PowerShell.openSession()) {
             PowerShellResponse response;
             response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Owner");
@@ -30,39 +31,37 @@ public class PrintService {
             String totalpages = response.getCommandOutput();
             int numberDocuments = documents.split("\n").length;
             if (numberDocuments > 3) {
-                listDataFromBuffor = new LinkedList<>();
+                dataFromBufferLinkedLis = new LinkedList<>();
                 for (int i = 3; i < numberDocuments; i++) {
                     String owner = StringUtils.deleteWhitespace(owners.split("\n")[i]);
                     String document = StringUtils.deleteWhitespace(documents.split("\n")[i]);
                     Integer numberPagesPrinted = Integer.parseInt(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]));
                     Integer numberTotalPagesInDocument = Integer.parseInt(StringUtils.deleteWhitespace(totalpages.split("\n")[i]));
-                    listDataFromBuffor.add(new DataFromBuffor(owner, document, numberPagesPrinted, numberTotalPagesInDocument));
+                    dataFromBufferLinkedLis.add(new DataFromBuffer(owner, document, numberPagesPrinted, numberTotalPagesInDocument));
                 }
             }
         } catch (PowerShellNotAvailableException ex) {
             ex.printStackTrace();
         }
-        return listDataFromBuffor;
+        return dataFromBufferLinkedLis;
     }
 
-    public static LinkedList<PrintModel> getPrintedDocuments() {
-        LinkedList<DataFromBuffor> listDataFromBuffer = getDataFromPBuffor();
-        LinkedList<PrintModel> listPrintedDocuments = null;
-        if (listDataFromBuffer != null) {
-            listPrintedDocuments = new LinkedList<>();
-            for (DataFromBuffor o : listDataFromBuffer) {
+    public static LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataFromBuffer> dataFromBufferLinkedList) {
+        LinkedList<PrintModel> printModelLinkedList = null;
+        if (dataFromBufferLinkedList != null) {
+            printModelLinkedList = new LinkedList<>();
+            for (DataFromBuffer o : dataFromBufferLinkedList) {
                 if (o.getTotalPages() == o.getPagesPrinted()) {
-                    listPrintedDocuments.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), new Date().toString()));
+                    printModelLinkedList.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), LocalDateTime.now()));
                 }
             }
         }
-        return listPrintedDocuments;
+        return printModelLinkedList;
     }
 
-    public static void addPrintPostRest() {
-        LinkedList<PrintModel> listPrintedDocuments = getPrintedDocuments();
-        if (listPrintedDocuments != null) {
-            for (PrintModel o : listPrintedDocuments) {
+    public static void addPrintPostRest(LinkedList<PrintModel> printModelLinkedList) {
+        if (printModelLinkedList != null) {
+            for (PrintModel o : printModelLinkedList) {
                 log.info("Dodanie wydruku: " + o);
                 HttpURLConnection conn;
                 try {

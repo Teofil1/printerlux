@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +26,7 @@ public class Print {
     private String nameDocument;
     @Column(name = "numberpages")
     private Integer numberPages;
-    @Column(name = "dateprint", length = 100)
-    private String datePrint;
+    @Column(name = "dateprint")
+    private LocalDateTime datePrint;
 
 }
