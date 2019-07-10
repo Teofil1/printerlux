@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class PrintModel {
 
     @JsonProperty("id")
@@ -25,12 +27,12 @@ public class PrintModel {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime datePrint;
 
-    public PrintModel(String owner, String nameDocument, Integer numberPages, LocalDateTime datePrint) {
+    /*public PrintModel(String owner, String nameDocument, Integer numberPages, LocalDateTime datePrint) {
         this.owner = owner;
         this.nameDocument = nameDocument;
         this.numberPages = numberPages;
         this.datePrint = datePrint;
         //this.ipv4 = ipv4;
-    }
+    }*/
 
 }

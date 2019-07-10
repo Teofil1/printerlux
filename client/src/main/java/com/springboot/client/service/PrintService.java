@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 
@@ -37,7 +36,12 @@ public class PrintService {
                     String document = StringUtils.deleteWhitespace(documents.split("\n")[i]);
                     Integer numberPagesPrinted = Integer.parseInt(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]));
                     Integer numberTotalPagesInDocument = Integer.parseInt(StringUtils.deleteWhitespace(totalpages.split("\n")[i]));
-                    allDocumentsFromBufferLinkedList.add(new DataFromBuffer(owner, document, numberPagesPrinted, numberTotalPagesInDocument));
+                    allDocumentsFromBufferLinkedList.add(DataFromBuffer.builder()
+                            .owner(owner)
+                            .document(document)
+                            .pagesPrinted(numberPagesPrinted)
+                            .totalPages(numberTotalPagesInDocument)
+                            .build());
                 }
             }
         } catch (PowerShellNotAvailableException ex) {
@@ -52,7 +56,12 @@ public class PrintService {
             printedDocumetsFromBufferLinkedList = new LinkedList<>();
             for (DataFromBuffer o : allDocumentsFromBufferLinkedList) {
                 if (o.getTotalPages() == o.getPagesPrinted()) {
-                    printedDocumetsFromBufferLinkedList.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), LocalDateTime.now()));
+                    printedDocumetsFromBufferLinkedList.add(PrintModel.builder()
+                            .owner(o.getOwner())
+                            .nameDocument(o.getDocument())
+                            .numberPages(o.getPagesPrinted())
+                            .datePrint(LocalDateTime.now())
+                            .build());
                 }
             }
         }
