@@ -17,8 +17,8 @@ import java.util.LinkedList;
 @Slf4j
 public class PrintService {
 
-    public static LinkedList<DataFromBuffer> getDataFromPBuffer() {
-        LinkedList<DataFromBuffer> dataFromBufferLinkedLis = null;
+    public static LinkedList<DataFromBuffer> getAllDocumentsFromPBuffer() {
+        LinkedList<DataFromBuffer> allDocumentsFromBufferLinkedList = null;
         try (PowerShell powerShell = PowerShell.openSession()) {
             PowerShellResponse response;
             response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Owner");
@@ -31,43 +31,43 @@ public class PrintService {
             String totalpages = response.getCommandOutput();
             int numberDocuments = documents.split("\n").length;
             if (numberDocuments > 3) {
-                dataFromBufferLinkedLis = new LinkedList<>();
+                allDocumentsFromBufferLinkedList = new LinkedList<>();
                 for (int i = 3; i < numberDocuments; i++) {
                     String owner = StringUtils.deleteWhitespace(owners.split("\n")[i]);
                     String document = StringUtils.deleteWhitespace(documents.split("\n")[i]);
                     Integer numberPagesPrinted = Integer.parseInt(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i]));
                     Integer numberTotalPagesInDocument = Integer.parseInt(StringUtils.deleteWhitespace(totalpages.split("\n")[i]));
-                    dataFromBufferLinkedLis.add(new DataFromBuffer(owner, document, numberPagesPrinted, numberTotalPagesInDocument));
+                    allDocumentsFromBufferLinkedList.add(new DataFromBuffer(owner, document, numberPagesPrinted, numberTotalPagesInDocument));
                 }
             }
         } catch (PowerShellNotAvailableException ex) {
             ex.printStackTrace();
         }
-        return dataFromBufferLinkedLis;
+        return allDocumentsFromBufferLinkedList;
     }
 
-    public static LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataFromBuffer> dataFromBufferLinkedList) {
-        LinkedList<PrintModel> printModelLinkedList = null;
-        if (dataFromBufferLinkedList != null) {
-            printModelLinkedList = new LinkedList<>();
-            for (DataFromBuffer o : dataFromBufferLinkedList) {
+    public static LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataFromBuffer> allDocumentsFromBufferLinkedList) {
+        LinkedList<PrintModel> printedDocumetsFromBufferLinkedList = null;
+        if (allDocumentsFromBufferLinkedList != null) {
+            printedDocumetsFromBufferLinkedList = new LinkedList<>();
+            for (DataFromBuffer o : allDocumentsFromBufferLinkedList) {
                 if (o.getTotalPages() == o.getPagesPrinted()) {
-                    printModelLinkedList.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), LocalDateTime.now()));
+                    printedDocumetsFromBufferLinkedList.add(new PrintModel(o.getOwner(), o.getDocument(), o.getPagesPrinted(), LocalDateTime.now()));
                 }
             }
         }
-        return printModelLinkedList;
+        return printedDocumetsFromBufferLinkedList;
     }
 
-    public static void addPrintPostRest(LinkedList<PrintModel> printModelLinkedList) {
-        if (printModelLinkedList != null) {
-            for (PrintModel o : printModelLinkedList) {
+    public static void addPrintPostRest(LinkedList<PrintModel> printedDocumetsFromBufferLinkedList) {
+        if (printedDocumetsFromBufferLinkedList != null) {
+            for (PrintModel o : printedDocumetsFromBufferLinkedList) {
                 log.info("Dodanie wydruku: " + o);
                 HttpURLConnection conn;
                 try {
                     conn = JSonService
                             .httpConnectToREST("http://localhost:5050/printerlux/addPrint",
-                                    "POST");
+                                    "POST", "Authorization");
                     JSonService.addParsedJsonObject(o, conn);
                 } catch (IOException e1) {
                     e1.printStackTrace();

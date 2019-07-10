@@ -12,9 +12,9 @@ public class SystemPrint {
     public static void main(String[] args) {
         GuiService.uiManager();
         while (true) {
-            LinkedList<DataFromBuffer> dataFromBufferLinkedList = PrintService.getDataFromPBuffer();
-            LinkedList<PrintModel> printModelLinkedList = PrintService.getPrintedDocuments(dataFromBufferLinkedList);
-            PrintService.addPrintPostRest(printModelLinkedList);
+            LinkedList<DataFromBuffer> allDocumentsFromPBufferLinkedList = PrintService.getAllDocumentsFromPBuffer();
+            LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = PrintService.getPrintedDocuments(allDocumentsFromPBufferLinkedList);
+            PrintService.addPrintPostRest(printedDocumentsFromBufferLinkedList);
             //PrintService.clearPrintedDocumentsFromBuffor();
         }
     }

@@ -60,28 +60,15 @@ public class JSonService {
         conn.disconnect();
     }
 
-    public static HttpURLConnection httpConnectToREST(String urlConn, String methodType) throws IOException {
+    public static HttpURLConnection httpConnectToREST(String urlConn, String methodType, String requestProperty) throws IOException {
         URL url = new URL(urlConn);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         String userCredentials = "user:password";
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
-        //conn.setRequestProperty(requestProperty, basicAuth);
-        conn.setDoOutput(true);
-        conn.setRequestMethod(methodType);
-        conn.setRequestProperty("Content-Type", "application/json");
-        return conn;
-    }
-
-    /*public static HttpURLConnection httpConnectToREST(String urlConn, String methodType, String requestProperty) throws IOException {
-        URL url = new URL(urlConn);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        String userCredentials = "user:password";
-        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
-        System.out.println(basicAuth);
         conn.setRequestProperty(requestProperty, basicAuth);
         conn.setDoOutput(true);
         conn.setRequestMethod(methodType);
         conn.setRequestProperty("Content-Type", "application/json");
         return conn;
-    }*/
+    }
 }
