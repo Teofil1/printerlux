@@ -16,9 +16,9 @@ import java.util.LinkedList;
 @Slf4j
 public class PrintService {
 
-    public static LinkedList<DataFromBuffer> getAllDocumentsFromPBuffer() {
+    public static LinkedList<DataFromBuffer> getAllDocumentsFromPBuffer(PowerShell powerShell) {
         LinkedList<DataFromBuffer> allDocumentsFromBufferLinkedList = null;
-        try (PowerShell powerShell = PowerShell.openSession()) {
+        try {
             PowerShellResponse response;
             response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Owner");
             String owners = response.getCommandOutput();
@@ -29,6 +29,7 @@ public class PrintService {
             response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object TotalPages");
             String totalpages = response.getCommandOutput();
             int numberDocuments = documents.split("\n").length;
+            System.out.println(numberDocuments);
             if (numberDocuments > 3) {
                 allDocumentsFromBufferLinkedList = new LinkedList<>();
                 for (int i = 3; i < numberDocuments; i++) {
@@ -43,7 +44,9 @@ public class PrintService {
                             .totalPages(numberTotalPagesInDocument)
                             .build());
                 }
+                clearPrintedDocumentsFromBuffor(powerShell);
             }
+
         } catch (PowerShellNotAvailableException ex) {
             ex.printStackTrace();
         }
@@ -97,8 +100,7 @@ public class PrintService {
         return ipv4;
     }
 
-    public static void clearPrintedDocumentsFromBuffor() {
-        PowerShell powerShell = PowerShell.openSession();
+    private static void clearPrintedDocumentsFromBuffor(PowerShell powerShell) {
         powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");
     }
 }

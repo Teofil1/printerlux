@@ -1,0 +1,14 @@
+create table print (
+  id bigint PRIMARY KEY,
+  owner varchar(100) NOT NULL,
+  nameDocument varchar(100) NOT NULL,
+  numberPages integer NOT NULL,
+  datePrint timestamp NOT NULL
+);
+
+create table Printer (
+  id bigint PRIMARY KEY,
+  serialNumber varchar(100) NOT NULL
+);
+
+
