@@ -7,6 +7,7 @@ import com.springboot.client.model.DataSingleDocumentFromBuffer;
 import com.springboot.client.model.PrintModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.time.LocalDateTime;
@@ -15,51 +16,66 @@ import java.util.LinkedList;
 @Slf4j
 public class PrintService {
 
-    public static LinkedList<DataSingleDocumentFromBuffer> getDataAllDocumentsFromPBuffer(PowerShell powerShell, int numberDocuments) {
-        LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList = null;
+    PowerShell powerShell;
+
+    public PrintService() {
+        openPowerShellSession();
+    }
+
+    public void openPowerShellSession() {
         try {
-            PowerShellResponse response;
-            response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Owner");
-            String owners = response.getCommandOutput();
-            response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
-            String documents = response.getCommandOutput();
-            response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object PagesPrinted");
-            String pagesprinted = response.getCommandOutput();
-            response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object TotalPages");
-            String totalpages = response.getCommandOutput();
-            allDocumentsFromBufferLinkedList = new LinkedList<>();
-            for (int i = 0; i < numberDocuments; i++) {
-                String owner = StringUtils.deleteWhitespace(owners.split("\n")[i + 3]);
-                String document = StringUtils.deleteWhitespace(documents.split("\n")[i + 3]);
-                Integer numberPagesPrinted = Integer.parseInt(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i + 3]));
-                Integer numberTotalPagesInDocument = Integer.parseInt(StringUtils.deleteWhitespace(totalpages.split("\n")[i + 3]));
-                allDocumentsFromBufferLinkedList.add(DataSingleDocumentFromBuffer.builder()
-                        .owner(owner)
-                        .document(document)
-                        .pagesPrinted(numberPagesPrinted)
-                        .totalPages(numberTotalPagesInDocument)
-                        .build());
-            }
-            clearPrintedDocumentsFromBuffor(powerShell);
+            powerShell = PowerShell.openSession();
         } catch (PowerShellNotAvailableException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void listenPrints() {
+        while (true) {
+            int numberDocuments = getNumberDocumentsInBuffer();
+            if (numberDocuments > 0) {
+                LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromPBufferLinkedList = getDataAllDocumentsFromPBuffer(numberDocuments);
+                LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = getPrintedDocuments(allDocumentsFromPBufferLinkedList);
+                addPrintPostRest(printedDocumentsFromBufferLinkedList);
+            }
+        }
+    }
+
+    public LinkedList<DataSingleDocumentFromBuffer> getDataAllDocumentsFromPBuffer(int numberDocuments) {
+        PowerShellResponse response;
+        response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Owner");
+        String owners = response.getCommandOutput();
+        response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
+        String documents = response.getCommandOutput();
+        response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object PagesPrinted");
+        String pagesprinted = response.getCommandOutput();
+        response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object TotalPages");
+        String totalpages = response.getCommandOutput();
+        LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList = new LinkedList<>();
+        for (int i = 0; i < numberDocuments; i++) {
+            String owner = StringUtils.deleteWhitespace(owners.split("\n")[i + 3]);
+            String document = StringUtils.deleteWhitespace(documents.split("\n")[i + 3]);
+            Integer numberPagesPrinted = Integer.parseInt(StringUtils.deleteWhitespace(pagesprinted.split("\n")[i + 3]));
+            Integer numberTotalPagesInDocument = Integer.parseInt(StringUtils.deleteWhitespace(totalpages.split("\n")[i + 3]));
+            allDocumentsFromBufferLinkedList.add(DataSingleDocumentFromBuffer.builder()
+                    .owner(owner)
+                    .document(document)
+                    .pagesPrinted(numberPagesPrinted)
+                    .totalPages(numberTotalPagesInDocument)
+                    .build());
+        }
+        clearPrintedDocumentsFromBuffor();
         return allDocumentsFromBufferLinkedList;
     }
 
-    public static int getNumberDocumentsInBuffer(PowerShell powerShell) {
-        try {
-            PowerShellResponse response;
-            response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
-            String documents = response.getCommandOutput();
-            return documents.split("\n").length - 3;
-        } catch (PowerShellNotAvailableException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
+    public int getNumberDocumentsInBuffer() {
+        PowerShellResponse response;
+        response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
+        String documents = response.getCommandOutput();
+        return documents.split("\n").length - 3;
     }
 
-    public static LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList) {
+    public LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList) {
         LinkedList<PrintModel> printedDocumetsFromBufferLinkedList = null;
         if (allDocumentsFromBufferLinkedList != null) {
             printedDocumetsFromBufferLinkedList = new LinkedList<>();
@@ -77,7 +93,7 @@ public class PrintService {
         return printedDocumetsFromBufferLinkedList;
     }
 
-    public static void addPrintPostRest(LinkedList<PrintModel> printedDocumetsFromBufferLinkedList) {
+    public void addPrintPostRest(LinkedList<PrintModel> printedDocumetsFromBufferLinkedList) {
         if (printedDocumetsFromBufferLinkedList != null) {
             for (PrintModel o : printedDocumetsFromBufferLinkedList) {
                 log.info("Dodanie wydruku: " + o);
@@ -94,19 +110,16 @@ public class PrintService {
         }
     }
 
-    public static String getIPFromPowerShell(PowerShell powerShell) {
+    public String getIPFromPowerShell() {
         String ipv4 = "";
-        try {
-            PowerShellResponse response;
-            response = powerShell.executeCommand("get-wmiobject -class win32_networkadapterconfiguration | Select-Object ipaddress");
-            String location = response.getCommandOutput();
-            ipv4 = location.split("\\{")[1].split(",")[0];
-        } catch (PowerShellNotAvailableException ex) {
-        }
+        PowerShellResponse response;
+        response = powerShell.executeCommand("get-wmiobject -class win32_networkadapterconfiguration | Select-Object ipaddress");
+        String location = response.getCommandOutput();
+        ipv4 = location.split("\\{")[1].split(",")[0];
         return ipv4;
     }
 
-    private static void clearPrintedDocumentsFromBuffor(PowerShell powerShell) {
+    public void clearPrintedDocumentsFromBuffor() {
         powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");
     }
 }
