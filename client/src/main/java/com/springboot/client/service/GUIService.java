@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class GuiService {
+public class GUIService {
 
     public static void uiManager() {
         try {
@@ -35,7 +35,6 @@ public class GuiService {
         final SystemTray tray = SystemTray.getSystemTray();
         trayIcon.setImageAutoSize(true);
         trayIcon.setToolTip("PrinterLuxmed");
-
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
         //Add components to popup menu
@@ -56,7 +55,7 @@ public class GuiService {
     }
 
 
-    protected static Image createImage(String path, String description) {
+    private static Image createImage(String path, String description) {
         URL imageURL = SystemPrint.class.getResource(path);
 
         if (imageURL == null) {

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class DataFromBuffer {
+public class DataSingleDocumentFromBuffer {
     private String owner;
     private String document;
     private Integer pagesPrinted;
