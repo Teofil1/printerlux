@@ -37,7 +37,7 @@ public class GuiService {
         trayIcon.setToolTip("PrinterLuxmed");
 
         // Create a popup menu components
-        MenuItem aboutItem = new MenuItem("About");
+        MenuItem aboutItem = new MenuItem("LuxmedPrinter");
         //Add components to popup menu
         popup.add(aboutItem);
 
