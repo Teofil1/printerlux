@@ -12,6 +12,9 @@ class PrintServiceTest extends SystemPrint {
 
     @Test
     void getPrintedDocuments() {
+
+
+
     }
 
     @Test

@@ -33,6 +33,7 @@ public class PrintService {
     public void listenPrints() {
         while (true) {
             int numberDocuments = getNumberDocumentsInBuffer();
+            System.out.println(numberDocuments);
             if (numberDocuments > 0) {
                 LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromPBufferLinkedList = getDataAllDocumentsFromPBuffer(numberDocuments);
                 LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = getPrintedDocuments(allDocumentsFromPBufferLinkedList);
@@ -69,6 +70,7 @@ public class PrintService {
     }
 
     public int getNumberDocumentsInBuffer() {
+        System.out.println();
         PowerShellResponse response;
         response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
         String documents = response.getCommandOutput();

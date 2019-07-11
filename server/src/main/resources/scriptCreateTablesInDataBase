@@ -11,4 +11,28 @@ create table Printer (
   serialNumber varchar(100) NOT NULL
 );
 
+create table Location (
+  id bigint PRIMARY KEY,
+  firstTwoOctetsIpAddress varchar(20) NOT NULL,
+  nameLocation varchar(100)
+);
 
+INSERT INTO public.location(
+	id, firsttwooctetsipaddress, namelocation)
+	VALUES
+	(1 , '10.1.', 'Radziwiłowska'),
+	(2 , '10.2.', 'Królewska'),
+	(3 , '10.3.', 'Zwycięska (ZONE)'),
+	(4 , '10.4.', 'Laboratorium'),
+	(5 , '10.5.', 'Księgowość'),
+	(6 , '10.6.', 'Koncertowa'),
+	(7 , '10.7.', 'Krasińskiego (Estetyczna/Mama)'),
+	(8 , '10.10.', 'Karmelicka'),
+	(9 , '10.11.', 'Biłgoraj 18'),
+	(10 , '10.12.', 'Chełm'),
+	(11 , '10.13.', 'Biłgoraj 50'),
+	(12 , '10.14.', 'Kraśnik'),
+	(13 , '10.15.', 'Zamość'),
+	(14 , '10.16.', 'Krasnystaw'),
+	(15 , '10.20.', 'Samodzielne punkty pobrań'),
+	(16 , '10.30.', 'Użytkownicy zewnętrzni');
