@@ -28,13 +28,15 @@ public class LocationService {
         String myFirstTwoOctetsIpAddress = getFirstTwoOctetsIPAddressFromPowerShell();
         LocationModel locationModel = null;
         try {
-            locationModel = JSonService.getLocationFromDB(myFirstTwoOctetsIpAddress);
-            if (locationModel == null) {
+            //locationModel = JSonService.getLocationModelFromDB(myFirstTwoOctetsIpAddress);
+            locationModel = JSonService.getLocationModelFromDB("10.0.");
+            System.out.println(locationModel);
+            if (locationModel.equals(null)) {
                 locationModel = LocationModel.builder()
                         .firstTwoOctetsIpAddress(getFirstTwoOctetsIPAddressFromPowerShell())
                         .build();
                 createLocationPostRest(locationModel);
-                locationModel = JSonService.getLocationFromDB(myFirstTwoOctetsIpAddress);
+                locationModel = JSonService.getLocationModelFromDB(myFirstTwoOctetsIpAddress);
             }
         } catch (IOException e) {
             e.printStackTrace();
