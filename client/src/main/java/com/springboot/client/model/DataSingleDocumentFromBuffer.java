@@ -12,5 +12,4 @@ public class DataSingleDocumentFromBuffer {
     private String document;
     private Integer pagesPrinted;
     private Integer totalPages;
-    //private String ipv4;
 }

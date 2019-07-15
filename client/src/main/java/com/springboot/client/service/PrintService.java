@@ -4,6 +4,7 @@ import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import com.springboot.client.model.DataSingleDocumentFromBuffer;
+import com.springboot.client.model.LocationModel;
 import com.springboot.client.model.PrintModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,25 +19,18 @@ public class PrintService {
 
     PowerShell powerShell;
 
-    public PrintService() {
-        openPowerShellSession();
+    public PrintService(PowerShell powerShell) {
+        this.powerShell=powerShell;
     }
 
-    public void openPowerShellSession() {
-        try {
-            powerShell = PowerShell.openSession();
-        } catch (PowerShellNotAvailableException ex) {
-            ex.printStackTrace();
-        }
-    }
 
-    public void listenPrints() {
+    public void listenPrints(LocationModel location) {
         while (true) {
             int numberDocuments = getNumberDocumentsInBuffer();
             System.out.println(numberDocuments);
             if (numberDocuments > 0) {
                 LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromPBufferLinkedList = getDataAllDocumentsFromPBuffer(numberDocuments);
-                LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = getPrintedDocuments(allDocumentsFromPBufferLinkedList);
+                LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = getPrintedDocuments(allDocumentsFromPBufferLinkedList, location);
                 addPrintPostRest(printedDocumentsFromBufferLinkedList);
             }
         }
@@ -65,19 +59,18 @@ public class PrintService {
                     .totalPages(numberTotalPagesInDocument)
                     .build());
         }
-        clearPrintedDocumentsFromBuffor();
+        //clearPrintedDocumentsFromBuffor();
         return allDocumentsFromBufferLinkedList;
     }
 
     public int getNumberDocumentsInBuffer() {
-        System.out.println();
         PowerShellResponse response;
         response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
         String documents = response.getCommandOutput();
         return documents.split("\n").length - 3;
     }
 
-    public LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList) {
+    public LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList, LocationModel location) {
         LinkedList<PrintModel> printedDocumetsFromBufferLinkedList = null;
         if (allDocumentsFromBufferLinkedList != null) {
             printedDocumetsFromBufferLinkedList = new LinkedList<>();
@@ -88,6 +81,7 @@ public class PrintService {
                             .nameDocument(o.getDocument())
                             .numberPages(o.getPagesPrinted())
                             .datePrint(LocalDateTime.now())
+                            .location(location)
                             .build());
                 }
             }
@@ -98,7 +92,7 @@ public class PrintService {
     public void addPrintPostRest(LinkedList<PrintModel> printedDocumetsFromBufferLinkedList) {
         if (printedDocumetsFromBufferLinkedList != null) {
             for (PrintModel o : printedDocumetsFromBufferLinkedList) {
-                log.info("Dodanie wydruku: " + o);
+                //log.info("Dodanie wydruku: " + o);
                 HttpURLConnection conn;
                 try {
                     conn = JSonService
@@ -112,14 +106,6 @@ public class PrintService {
         }
     }
 
-    public String getIPFromPowerShell() {
-        String ipv4 = "";
-        PowerShellResponse response;
-        response = powerShell.executeCommand("get-wmiobject -class win32_networkadapterconfiguration | Select-Object ipaddress");
-        String location = response.getCommandOutput();
-        ipv4 = location.split("\\{")[1].split(",")[0];
-        return ipv4;
-    }
 
     public void clearPrintedDocumentsFromBuffor() {
         powerShell.executeCommand("Get-WmiObject Win32_PrintJob | Where-Object {$_.JobStatus -eq 'Printed'} | Foreach-Object { $_.Delete() }");

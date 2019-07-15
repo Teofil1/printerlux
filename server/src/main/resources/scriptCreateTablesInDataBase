@@ -3,7 +3,8 @@ create table print (
   owner varchar(100) NOT NULL,
   nameDocument varchar(100) NOT NULL,
   numberPages integer NOT NULL,
-  datePrint timestamp NOT NULL
+  datePrint timestamp NOT NULL,
+  id_location bigint REFERENCES Location(id) NOT NULL
 );
 
 create table Printer (
@@ -13,7 +14,7 @@ create table Printer (
 
 create table Location (
   id bigint PRIMARY KEY,
-  firstTwoOctetsIpAddress varchar(20) NOT NULL,
+  firstTwoOctetsIpAddress varchar(20) NOT NULL UNIQUE,
   nameLocation varchar(100)
 );
 

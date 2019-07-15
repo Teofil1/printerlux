@@ -27,4 +27,10 @@ public class Print {
     @Column(name = "dateprint")
     private LocalDateTime datePrint;
 
+
+    //@JoinColumn(name = "id_location", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id_location")
+    private Location location;
+
 }

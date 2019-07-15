@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PrintRepository extends JpaRepository<Print, Integer> {
+public interface PrintRepository extends JpaRepository<Print, Long> {
 
-    Print getById(Integer id);
+    Print getById(Long id);
 
     List<Print> findByOwner(String owner);
     /*@Query("select p from print p where owner = :name")

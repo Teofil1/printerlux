@@ -3,7 +3,6 @@ package com.springboot.server.entities;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -15,5 +14,5 @@ public class PrintDTO {
     private String nameDocument;
     private Integer numberPages;
     private LocalDateTime datePrint;
-    //private String ipv4;
+    private LocationDTO location;
 }

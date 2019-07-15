@@ -1,7 +1,11 @@
 package com.springboot.client.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboot.client.model.LocationModel;
 import com.springboot.client.model.PrintModel;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +45,7 @@ public class JSonService {
         return listOfCurseModel;
     }*/
 
-    public static void addParsedJsonObject(PrintModel printModel, HttpURLConnection conn) throws IOException {
+    public static void addParsedJsonObject(Object printModel, HttpURLConnection conn) throws IOException {
         /*Gson gson = new Gson();
         String input = gson.toJson(printModel);*/
         ObjectMapper mapper = new ObjectMapper();
@@ -59,6 +63,38 @@ public class JSonService {
 
         conn.disconnect();
     }
+
+
+    public static LocationModel getLocationFromDB(String firstTwoOctetsIpAddress) throws IOException {
+        URL url = new URL("http://localhost:5050/printerlux/location/" + firstTwoOctetsIpAddress);//your url i.e fetch data from .
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
+        String userCredentials = "user:password";
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+        conn.setRequestProperty("Authorization", basicAuth);
+
+        if (conn.getResponseCode() != 200) {
+            throw new RuntimeException("Failed : HTTP Error code : "
+                    + conn.getResponseCode());
+        }
+        InputStreamReader in = new InputStreamReader(conn.getInputStream());
+        BufferedReader br = new BufferedReader(in);
+        String output;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+
+        output = br.readLine();
+        Gson g = new Gson();
+        LocationModel locationModel = g.fromJson(output, LocationModel.class);
+        System.out.println(locationModel.toString());
+        //LocationModel locationModel = mapper.readValue(output, LocationModel.class);
+        conn.disconnect();
+        return locationModel;
+    }
+
 
     public static HttpURLConnection httpConnectToREST(String urlConn, String methodType, String requestProperty) throws IOException {
         URL url = new URL(urlConn);

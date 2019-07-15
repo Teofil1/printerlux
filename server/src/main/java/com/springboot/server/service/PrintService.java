@@ -1,5 +1,7 @@
 package com.springboot.server.service;
 
+import com.springboot.server.entities.Location;
+import com.springboot.server.entities.LocationDTO;
 import com.springboot.server.entities.Print;
 import com.springboot.server.entities.PrintDTO;
 import com.springboot.server.repository.PrintRepository;
@@ -26,10 +28,7 @@ public class PrintService {
     public void addPrint(@RequestBody PrintDTO printDTO) {
         ModelMapper modelMapper = new ModelMapper();
         Print print = modelMapper.map(printDTO, Print.class);
-        try {
-            printRepository.save(print);
-        } catch (Exception e) {
-        }
+        printRepository.save(print);
     }
 
     public List<Print> getPrintByOwner(String owner) {
