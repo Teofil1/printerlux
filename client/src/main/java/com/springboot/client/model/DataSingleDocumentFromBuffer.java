@@ -8,9 +8,8 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class DataSingleDocumentFromBuffer {
-    private final String owner;
-    private final String document;
-    private final Integer pagesPrinted;
-    private final Integer totalPages;
-    //private String ipv4;
+    private String owner;
+    private String document;
+    private Integer pagesPrinted;
+    private Integer totalPages;
 }

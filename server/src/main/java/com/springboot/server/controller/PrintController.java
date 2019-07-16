@@ -1,5 +1,6 @@
 package com.springboot.server.controller;
 
+import com.springboot.server.entities.LocationDTO;
 import com.springboot.server.entities.Print;
 import com.springboot.server.entities.PrintDTO;
 import com.springboot.server.service.PrintService;
@@ -16,15 +17,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/printerlux") // This means URL's start with /demo (after Application path)
-public class MainController {
+public class PrintController {
 
     @Autowired
     private PrintService printService;
 
     @PostMapping("/addPrint")
     public void addPrint(@Valid @RequestBody PrintDTO printDTO, HttpServletRequest httpServletRequest) {
-        log.info("Dodanie wydruku: " + printDTO);
-        //PrintDTO print = printService.addPrint(printDTO);
         printService.addPrint(printDTO);
     }
 
@@ -35,7 +34,7 @@ public class MainController {
         return new ResponseEntity<>(listOfPrints, HttpStatus.OK);
     }
 
-    @GetMapping("/print/{owner}")
+  /*  @GetMapping("/print/{owner}")
     public ResponseEntity<List<Print>> getPrintByOwner(@PathVariable("owner") String owner) {
         List<Print> listOfPrints = printService.getPrintByOwner(owner);
         log.info("Pobranie wydrokow: {}" + listOfPrints.toString());
@@ -48,9 +47,5 @@ public class MainController {
         log.info("Pobranie wydrokow: {}" + listOfPrints.toString());
         return new ResponseEntity<>(listOfPrints, HttpStatus.OK);
     }
-
-   /* @GetMapping(path="/all")
-    public @ResponseBody Iterable<Print> getAllUsers() {
-        return printRepository.findAll();
-    }*/
+    */
 }
