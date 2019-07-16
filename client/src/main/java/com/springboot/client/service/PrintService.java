@@ -1,7 +1,6 @@
 package com.springboot.client.service;
 
 import com.profesorfalken.jpowershell.PowerShell;
-import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import com.springboot.client.model.DataSingleDocumentFromBuffer;
 import com.springboot.client.model.LocationModel;
@@ -20,14 +19,14 @@ public class PrintService {
     PowerShell powerShell;
 
     public PrintService(PowerShell powerShell) {
-        this.powerShell=powerShell;
+        this.powerShell = powerShell;
     }
 
 
     public void listenPrints(LocationModel location) {
         while (true) {
             int numberDocuments = getNumberDocumentsInBuffer();
-            System.out.println(numberDocuments);
+            System.out.println("Liczba wszystkich dokumentow w buforze:" + numberDocuments);
             if (numberDocuments > 0) {
                 LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromPBufferLinkedList = getDataAllDocumentsFromPBuffer(numberDocuments);
                 LinkedList<PrintModel> printedDocumentsFromBufferLinkedList = getPrintedDocuments(allDocumentsFromPBufferLinkedList, location);
@@ -59,7 +58,7 @@ public class PrintService {
                     .totalPages(numberTotalPagesInDocument)
                     .build());
         }
-        //clearPrintedDocumentsFromBuffor();
+        clearPrintedDocumentsFromBuffor();
         return allDocumentsFromBufferLinkedList;
     }
 
@@ -67,7 +66,8 @@ public class PrintService {
         PowerShellResponse response;
         response = powerShell.executeCommand("get-wmiobject -class win32_PrintJob | Select-Object Document");
         String documents = response.getCommandOutput();
-        return documents.split("\n").length - 3;
+        if(documents.split("\n").length - 3 == -2) return 0;
+        else return documents.split("\n").length - 3;
     }
 
     public LinkedList<PrintModel> getPrintedDocuments(LinkedList<DataSingleDocumentFromBuffer> allDocumentsFromBufferLinkedList, LocationModel location) {
@@ -92,13 +92,13 @@ public class PrintService {
     public void addPrintPostRest(LinkedList<PrintModel> printedDocumetsFromBufferLinkedList) {
         if (printedDocumetsFromBufferLinkedList != null) {
             for (PrintModel o : printedDocumetsFromBufferLinkedList) {
-                //log.info("Dodanie wydruku: " + o);
                 HttpURLConnection conn;
                 try {
                     conn = JSonService
                             .httpConnectToREST("http://localhost:5050/printerlux/addPrint",
                                     "POST", "Authorization");
                     JSonService.addParsedJsonObject(o, conn);
+                    log.info("Dodanie wydruku: " + o);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

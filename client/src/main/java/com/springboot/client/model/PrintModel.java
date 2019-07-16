@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -29,13 +28,5 @@ public class PrintModel {
     private LocalDateTime datePrint;
     @JsonProperty("location")
     private LocationModel location;
-
-    /*public PrintModel(String owner, String nameDocument, Integer numberPages, LocalDateTime datePrint) {
-        this.owner = owner;
-        this.nameDocument = nameDocument;
-        this.numberPages = numberPages;
-        this.datePrint = datePrint;
-        //this.ipv4 = ipv4;
-    }*/
 
 }

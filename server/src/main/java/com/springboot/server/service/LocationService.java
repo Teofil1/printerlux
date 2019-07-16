@@ -32,16 +32,12 @@ public class LocationService {
     }
 
     public void createLocation(@RequestBody LocationDTO locationDTO) {
-        //Location location = getLocationByFirstTwoOctetsIpAddress(locationDTO.getFirstTwoOctetsIpAddress());
-        //if (location == null) {
-            ModelMapper modelMapper = new ModelMapper();
-            Location location = modelMapper.map(locationDTO, Location.class);
-            locationRepository.save(location);
-        //}
+        ModelMapper modelMapper = new ModelMapper();
+        Location location = modelMapper.map(locationDTO, Location.class);
+        locationRepository.save(location);
         locationDTO.setId(location.getId());
         locationDTO.setNameLocation(location.getNameLocation());
-        log.info("!!!!!" + locationDTO.toString());
-        //return locationDTO;
+        log.info("Zapis lokalizacji do bazy: " + locationDTO.toString());
     }
 
 }

@@ -4,7 +4,6 @@ import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.springboot.client.model.LocationModel;
 import com.springboot.client.service.GUIService;
-import com.springboot.client.service.JSonService;
 import com.springboot.client.service.LocationService;
 import com.springboot.client.service.PrintService;
 

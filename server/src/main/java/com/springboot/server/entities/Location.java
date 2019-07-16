@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +22,5 @@ public class Location {
     private String firstTwoOctetsIpAddress;
     @Column(name = "namelocation", length = 100)
     private String nameLocation;
-/*
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Print> prints = new HashSet<>();*/
+
 }

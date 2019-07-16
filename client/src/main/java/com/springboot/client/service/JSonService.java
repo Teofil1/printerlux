@@ -1,11 +1,9 @@
 package com.springboot.client.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.client.model.LocationModel;
-import com.springboot.client.model.PrintModel;
 import com.google.gson.Gson;
+import com.springboot.client.model.LocationModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +33,7 @@ public class JSonService {
     }
 
 
-    public static LocationModel getLocationModelFromDB(String firstTwoOctetsIpAddress) throws IOException {
+    public static LocationModel getLocationModelGetRest(String firstTwoOctetsIpAddress) throws IOException {
         URL url = new URL("http://localhost:5050/printerlux/location/" + firstTwoOctetsIpAddress);//your url i.e fetch data from .
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
